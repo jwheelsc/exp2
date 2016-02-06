@@ -31,7 +31,15 @@ arr = [129:132, 21, 23];
 
 
 %% load the mineral data
-[Mtx,variables]= xlsread('D:\Field_data\2013\Summer\Geochemistry\EXP2_results.xlsx',2,'A1:U137');
+[Mtx,variables]= xlsread('D:\Field_data\2013\Summer\Geochemistry\EXP2_results.xlsx',2,'A1:V137');
+stdGL1 = Mtx(:,end)
+Gl1dat = Mtx(:,1)
+
+[MtxGL1,variablesGL1]= xlsread('D:\Field_data\2013\Summer\Geochemistry\gl1Temp.xlsx',4,'A1:W28');
+
+MtxGL1 = [zeros(1,length(MtxGL1(:,1)))',MtxGL1]
+
+% keyboard
 
 if ALL == 1
     %ALL
@@ -106,60 +114,94 @@ li = Mtx(:,41);
 sp = Mtx(:,42);
 fms= Mtx(:,43);
 
-
-
+%%
+RR = 5
 f12 = figure(12);
-fs6 = 18;
-msf = (fms+0.1)*10
-xos = 0.01
-a = 22;
-yy = Mtx(:,114)+Mtx(:,119)+Mtx(:,122)+Mtx(:,125);
+for subP = [1:3]
 
-for i = 1:length(elems)
-
-    y = yy(i)
-    if sp(i) == 1 && li(i) == 2
-    [ls,fc,xx,ms,fac,ew] = specsExp2(sp(i),li(i));
-    h1 = plot(xx,y,'marker',ls,'markerfacecolor',fac,...
-                'markeredgecolor',fc,'markersize',ms)
-            text(xx+xos,y,num2str(Mtx(i,1)))
-    end
-    if sp(i) == 2 && li(i) == 2
-    [ls,fc,xx,ms,fac,ew] = specsExp2(sp(i),li(i));
-    h2 = plot(xx,y,'marker',ls,'markerfacecolor',fac,...
-                'markeredgecolor',fc,'markersize',ms)
-            text(xx+xos,y,num2str(Mtx(i,1)))
-    end
-    if sp(i) == 1 && li(i) == 1
-    [ls,fc,xx,ms,fac,ew] = specsExp2(sp(i),li(i));
-    h3 = plot(xx,y,'marker',ls,'markerfacecolor',fac,...
-                'markeredgecolor',fc,'markersize',ms)
-            text(xx+xos,y,num2str(Mtx(i,1)))
-    end
-    if sp(i) == 2 && li(i) == 1
-    [ls,fc,xx,ms,fac,ew] = specsExp2(sp(i),li(i));
-    h4 = plot(xx,y,'marker',ls,'markerfacecolor',fac,...
-                'markeredgecolor',fc,'markersize',ms)
-            text(xx+xos,y,num2str(Mtx(i,1)))
-    end
+    subplot(2,2,subP)
+%     pA = [1:4]+4
+    pA = [114:117]+(4*(RR-1))
+    a = pA(subP)
+    fs6 = 12;
+    msf = (fms+0.1)*10
+    xos = 0.2
+    AA = [2:5]+(4*(RR-1))
+    a1 = AA(subP)
+    yy = Mtx(:,a);
+    
+%     boxplot(MtxGL1(:,a),3*ones(1,length(MtxGL1(:,a))))
+    xq = MtxGL1(:,a1)
+    yq1 = quantile(MtxGL1(:,a1),0.01)
+    yq2 = quantile(MtxGL1(:,a1),0.25)
+    yq3 = quantile(MtxGL1(:,a1),0.75)
+    yq4 = quantile(MtxGL1(:,a1),0.9)
+    
+    plot([3,3],[yq1,yq4], 'k')
+    hold on 
+    plot([3,3],[yq2,yq3],'linewidth', 2,'color','b')
     hold on
-end
-xlim([0 5])
-xl1 = get(gca,'xlim')
-ylabel(varStr(a))
-% ylabel('SSC/Q')
-%     ylabel('Ca^{2+}/Mg^{2+}')
-% title(varStr(a),'fontsize',32)
-%     set(gca,'fontsize',20)
-xnames = {'MS-S','MS-NS','MX-S','MX-NS'}
-XX = [1:length(xnames)]
-fs = 12
-set(gca, 'XTick', XX, 'XTickLabel', xnames, 'fontsize', 12)
-set(gca,'fontsize',20)
-grid on
-% % savePDFfunction(f12,'QSSC')
+    hold on
+    plot([2.9,3.1],[yq1, yq1], 'k')
+    hold on
+    plot([2.9,3.1],[yq4, yq4], 'k')
 
-%% no I have to make 4*4 plots
+    for i = 1:length(elems)
+        hold on
+        y = yy(i)
+        if sp(i) == 1 && li(i) == 2
+        [ls,fc,xx,ms,fac,ew] = specsExp2(sp(i),li(i));
+        h1 = plot(xx,y,'marker',ls,'markerfacecolor',fac,...
+                    'markeredgecolor',fc,'markersize',ms)
+                text(xx+xos,y,num2str(Mtx(i,1)), 'fontsize', 6)
+        end
+        if sp(i) == 2 && li(i) == 2
+        [ls,fc,xx,ms,fac,ew] = specsExp2(sp(i),li(i));
+        h2 = plot(xx,y,'marker',ls,'markerfacecolor',fac,...
+                    'markeredgecolor',fc,'markersize',ms)
+                text(xx+xos,y,num2str(Mtx(i,1)), 'fontsize', 6)
+        end
+        if sp(i) == 1 && li(i) == 1
+        [ls,fc,xx,ms,fac,ew] = specsExp2(sp(i),li(i));
+        h3 = plot(xx,y,'marker',ls,'markerfacecolor',fac,...
+                    'markeredgecolor',fc,'markersize',ms)
+                text(xx+xos,y,num2str(Mtx(i,1)), 'fontsize', 6)
+        end
+        if sp(i) == 2 && li(i) == 1
+        [ls,fc,xx,ms,fac,ew] = specsExp2(sp(i),li(i));
+        h4 = plot(xx,y,'marker',ls,'markerfacecolor',fac,...
+                    'markeredgecolor',fc,'markersize',ms)
+                text(xx+xos,y,num2str(Mtx(i,1)), 'fontsize', 6)
+        end
+        hold on
+ 
+    end
+   
+    
+    
+    xlim([0 5])
+
+    xl1 = get(gca,'xlim')
+    ylabel(varStr(a))
+    % ylabel('SSC/Q')
+    %     ylabel('Ca^{2+}/Mg^{2+}')
+    % title(varStr(a),'fontsize',32)
+    %     set(gca,'fontsize',20)
+    xnames = {'MS-S','MS-NS','MX-S','MX-NS'}
+    XX = [1:length(xnames)]
+  
+    set(gca, 'XTick', XX, 'XTickLabel', xnames, 'fontsize', 8)
+%     set(gca,'fontsize',12)
+    grid on
+%     savePDFfunction(f12,['ion4plotFR' num2str(RR)])
+end
+%%
+
+x = Mtx(:,18)
+[p,anovatab,stats] = anova1(x,typeA)
+[c,m,h,nms] = multcompare(stats,'ctype','hsd','alpha',0.10)
+
+return
 
 %% x y plots
 f2  = figure(2)
